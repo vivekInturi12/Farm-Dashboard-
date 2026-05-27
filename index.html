@@ -1,0 +1,954 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --g50:#EAF3DE;--g100:#C0DD97;--g200:#97C459;--g400:#639922;--g600:#3B6D11;--g800:#27500A;
+  --a50:#FAEEDA;--a100:#FAC775;--a400:#BA7517;--a600:#854F0B;
+  --r50:#FCEBEB;--r100:#F7C1C1;--r400:#E24B4A;--r600:#A32D2D;
+  --b50:#E6F1FB;--b100:#B5D4F4;--b400:#378ADD;--b600:#185FA5;
+  --t50:#E1F5EE;--t100:#9FE1CB;--t400:#1D9E75;--t600:#0F6E56;
+  --page:#F2F8EC;--card:#fff;--brd:#CCEAA0;--brd2:#A8D870;
+  --radius:16px;--radius-sm:11px;--radius-pill:100px;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:translateX(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%,100%{opacity:1}50%{opacity:.55}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes barGrow{from{height:0}to{height:var(--h)}}
+@keyframes progGrow{from{width:0}to{width:var(--w)}}
+@keyframes navPop{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+@keyframes notiBounce{0%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}60%{transform:translateY(-2px)}}
+@keyframes heroSlide{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes cardStagger{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.ani-fadeup{animation:fadeUp .38s cubic-bezier(.22,.68,0,1.2) both}
+.ani-fadein{animation:fadeIn .3s ease both}
+.ani-popIn{animation:popIn .32s cubic-bezier(.22,.68,0,1.2) both}
+.ani-slide-r{animation:slideRight .35s cubic-bezier(.22,.68,0,1.2) both}
+.ani-slide-l{animation:slideLeft .35s cubic-bezier(.22,.68,0,1.2) both}
+
+.d1{animation-delay:.04s}.d2{animation-delay:.09s}.d3{animation-delay:.14s}.d4{animation-delay:.19s}.d5{animation-delay:.24s}.d6{animation-delay:.29s}
+
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--page)}
+
+.sr-only{position:absolute;width:1px;height:1px;clip:rect(0,0,0,0);overflow:hidden}
+
+/* ── PHONE FRAME ── */
+.phone{
+  width:390px;max-width:100%;
+  background:var(--page);
+  border-radius:36px;
+  border:2px solid var(--brd);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  min-height:780px;
+  margin:0 auto;
+}
+
+/* Status bar */
+.sbar{background:var(--g600);padding:10px 18px 8px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.sbar-l{color:#fff;font-size:12px;font-weight:500}
+.sbar-r{display:flex;gap:6px;align-items:center}
+.sbar-r i{font-size:14px;color:#fff}
+.noti-dot{width:7px;height:7px;background:#E24B4A;border-radius:50%;border:1.5px solid var(--g600);animation:notiBounce 2s ease infinite}
+
+/* Scrollable screen */
+.screen{flex:1;overflow-y:auto;background:var(--page)}
+.screen::-webkit-scrollbar{display:none}
+
+/* Pages */
+.pg{display:none}
+.pg.act{display:block}
+
+/* Bottom nav */
+.bnav{display:flex;background:var(--card);border-top:1.5px solid var(--brd);flex-shrink:0;padding:4px 0 8px}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px 0;cursor:pointer;font-size:9px;color:#888;border:none;background:none;position:relative;transition:color .18s;min-height:44px}
+.ni.act{color:var(--g600)}
+.ni i{font-size:22px;transition:transform .18s}
+.ni:active i{animation:navPop .28s ease}
+.ni-bar{position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:3px;background:var(--g400);border-radius:0 0 3px 3px;transition:width .25s cubic-bezier(.22,.68,0,1.2)}
+.ni.act .ni-bar{width:26px}
+
+/* ── HERO ── */
+.hero{background:var(--g600);padding:16px 16px 20px;overflow:hidden;position:relative}
+.hero::before{content:'';position:absolute;right:-30px;top:-30px;width:110px;height:110px;background:rgba(255,255,255,.07);border-radius:50%;border:20px solid rgba(255,255,255,.05)}
+.hero-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:10px;font-weight:500;padding:4px 10px;border-radius:var(--radius-pill);margin-bottom:9px}
+.hero-pill i{font-size:11px}
+.hero-name{color:#fff;font-size:22px;font-weight:500;line-height:1.2;animation:heroSlide .4s ease both}
+.hero-sub{color:rgba(255,255,255,.72);font-size:12px;margin-top:3px}
+.hero-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}
+.hbox{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:10px 8px;text-align:center;animation:popIn .38s ease both}
+.hbox-val{color:#fff;font-size:19px;font-weight:500;line-height:1}
+.hbox-lbl{color:rgba(255,255,255,.68);font-size:10px;margin-top:3px}
+
+/* ── SECTION HEADER ── */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sec-title{font-size:12px;font-weight:500;color:var(--g600);text-transform:uppercase;letter-spacing:.055em;display:flex;align-items:center;gap:5px}
+.sec-title::before{content:'';width:3px;height:13px;background:var(--g600);border-radius:2px}
+.sec-link{font-size:11px;color:var(--b400);cursor:pointer}
+
+.pad{padding:14px}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1.5px solid var(--brd);border-radius:var(--radius);padding:13px 14px;margin-bottom:10px;transition:border-color .15s}
+.card:active{border-color:var(--brd2)}
+
+/* ── ALERT ROWS ── */
+.alert{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px;margin-bottom:8px;cursor:pointer;border:1.5px solid transparent;transition:border-color .18s,transform .12s}
+.alert:active{transform:scale(.98)}
+.alert.green{background:var(--g50);border-color:var(--brd)}
+.alert.amber{background:var(--a50);border-color:var(--a100)}
+.alert.red{background:var(--r50);border-color:var(--r100)}
+.alert.blue{background:var(--b50);border-color:var(--b100)}
+.alert-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.alert.green .alert-ico{background:var(--g100);color:var(--g600)}
+.alert.amber .alert-ico{background:var(--a100);color:var(--a600)}
+.alert.red .alert-ico{background:var(--r100);color:var(--r600)}
+.alert.blue .alert-ico{background:var(--b100);color:var(--b600)}
+.a-t{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.a-s{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+
+/* ── QUICK ACTION GRID ── */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.qa{background:var(--card);border:1.5px solid var(--brd);border-radius:var(--radius);padding:14px 12px;cursor:pointer;transition:border-color .15s,transform .12s,background .15s;display:flex;flex-direction:column;gap:7px}
+.qa:active{transform:scale(.96);border-color:var(--brd2);background:var(--g50)}
+.qa-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform .18s}
+.qa:active .qa-ico{transform:rotate(-8deg) scale(1.1)}
+.qa-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.qa-sub{font-size:11px;color:var(--color-text-secondary)}
+
+/* ── WEATHER ── */
+.wband{background:var(--g600);border-radius:var(--radius);border:2px solid var(--g800);padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;overflow:hidden;position:relative}
+.wband::after{content:'';position:absolute;right:-16px;bottom:-16px;width:80px;height:80px;background:rgba(255,255,255,.06);border-radius:50%}
+.w-temp{font-size:38px;font-weight:500;color:#fff;line-height:1}
+.w-loc{font-size:11px;color:rgba(255,255,255,.7);margin-bottom:4px}
+.w-info{font-size:11px;color:rgba(255,255,255,.75);line-height:1.7}
+.w-safe{color:#A8D870;font-weight:500}
+.wdays{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-bottom:12px}
+.wday{background:var(--card);border:1.5px solid var(--brd);border-radius:11px;padding:9px 4px;text-align:center;transition:border-color .15s,transform .15s}
+.wday:active{transform:scale(.95);border-color:var(--brd2)}
+.wd-n{font-size:10px;color:var(--color-text-secondary)}
+.wd-t{font-size:13px;font-weight:500;margin:3px 0;color:var(--color-text-primary)}
+.wd-r{font-size:10px;color:var(--b400)}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:var(--radius-pill);font-size:11px;font-weight:500;border:1.5px solid transparent}
+.badge.green{background:var(--g50);color:var(--g800);border-color:var(--brd)}
+.badge.amber{background:var(--a50);color:var(--a600);border-color:var(--a100)}
+.badge.red{background:var(--r50);color:var(--r600);border-color:var(--r100)}
+.badge.blue{background:var(--b50);color:var(--b600);border-color:var(--b100)}
+.badge.teal{background:var(--t50);color:var(--t600);border-color:var(--t100)}
+
+/* ── BUTTONS ── */
+.btn-pri{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:13px;background:var(--g600);color:#fff;border:2px solid var(--g800);border-radius:13px;font-size:14px;font-weight:500;cursor:pointer;transition:background .15s,transform .1s}
+.btn-pri:hover{background:var(--g800)}
+.btn-pri:active{transform:scale(.97)}
+.btn-sec{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:12px;background:var(--card);color:var(--g600);border:2px solid var(--brd2);border-radius:13px;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s,transform .1s;margin-top:8px}
+.btn-sec:hover{background:var(--g50)}
+.btn-sec:active{transform:scale(.97)}
+.btn-amber{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:12px;background:var(--a600);color:#fff;border:2px solid var(--a400);border-radius:13px;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s,transform .1s;margin-top:8px}
+.btn-amber:active{transform:scale(.97)}
+.btn-sm{padding:7px 13px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;transition:background .15s,transform .1s;display:inline-flex;align-items:center;gap:5px;border:2px solid;white-space:nowrap}
+.btn-sm:active{transform:scale(.93)}
+.btn-sm.g{background:var(--g600);color:#fff;border-color:var(--g800)}
+.btn-sm.g:hover{background:var(--g800)}
+.btn-sm.b{background:var(--b600);color:#fff;border-color:var(--b400)}
+.btn-sm.a{background:var(--a600);color:#fff;border-color:var(--a400)}
+.btn-sm.r{background:var(--card);color:var(--r600);border-color:var(--r100)}
+.btn-sm.out{background:var(--card);color:var(--g600);border-color:var(--brd2)}
+
+/* ── TABS ── */
+.tabbar{display:flex;background:var(--card);border-bottom:1.5px solid var(--brd);overflow-x:auto;flex-shrink:0}
+.tabbar::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:11px 15px;font-size:12px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+.tab.act{color:var(--g600);border-bottom-color:var(--g400)}
+.sp{display:none}
+.sp.act{display:block;animation:fadeUp .32s cubic-bezier(.22,.68,0,1.2) both}
+
+/* ── PAGE HEADER ── */
+.pg-hdr{background:var(--g600);padding:12px 16px 16px;flex-shrink:0}
+.pg-back{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.back-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.28);border-radius:10px;color:#fff;padding:5px 10px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:background .15s}
+.back-btn:active{background:rgba(255,255,255,.3);transform:scale(.96)}
+.pg-title{color:#fff;font-size:19px;font-weight:500}
+.pg-sub{color:rgba(255,255,255,.68);font-size:12px;margin-top:2px}
+
+/* ── STAT BOXES ── */
+.stat2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.sbox{background:var(--g50);border:1.5px solid var(--brd);border-radius:13px;padding:11px 12px;animation:popIn .35s ease both}
+.sbox-lbl{font-size:11px;color:var(--g600)}
+.sbox-val{font-size:21px;font-weight:500;margin-top:2px;color:var(--color-text-primary)}
+.sbox-val.g{color:var(--g600)}
+
+/* ── PROGRESS ── */
+.prog-bar{height:9px;background:var(--g50);border-radius:100px;overflow:hidden;border:1px solid var(--brd2)}
+.prog-fill{height:100%;background:var(--g400);border-radius:100px;animation:progGrow .8s cubic-bezier(.22,.68,0,1.2) both;animation-delay:.3s}
+.prog-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+
+/* ── CALENDAR ITEMS ── */
+.cal-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--g50)}
+.cal-item:last-child{border:none}
+.cal-dt{min-width:40px;background:var(--g50);border:1.5px solid var(--brd);border-radius:10px;padding:5px 4px;text-align:center}
+.cal-dd{font-size:17px;font-weight:500;color:var(--g800);line-height:1}
+.cal-mm{font-size:9px;color:var(--g600);text-transform:uppercase}
+.cal-body{flex:1}
+.cal-t{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.cal-s{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+
+/* ── PRICE CARDS ── */
+.price-card{background:var(--card);border:1.5px solid var(--brd);border-radius:var(--radius);padding:13px;margin-bottom:10px;transition:border-color .15s}
+.price-card:active{border-color:var(--brd2)}
+.pc-vals{display:flex;border-radius:10px;overflow:hidden;border:1.5px solid var(--brd);margin-top:10px}
+.pv{flex:1;text-align:center;padding:8px 4px;background:var(--g50)}
+.pv.hi{background:var(--g100)}
+.pv-lbl{font-size:10px;color:var(--g600)}
+.pv-num{font-size:14px;font-weight:500;margin-top:2px;color:var(--g800)}
+.pv.hi .pv-num{font-size:16px}
+
+/* ── BAR CHART ── */
+.chart-wrap{background:var(--card);border:1.5px solid var(--brd);border-radius:var(--radius);padding:12px;margin-bottom:10px}
+.bars{display:flex;align-items:flex-end;gap:5px;height:80px;padding-bottom:0;border-bottom:1px solid var(--brd)}
+.bar{flex:1;border-radius:4px 4px 0 0;border-top:2px solid;min-width:0}
+.bar-anim{animation:barGrow .6s cubic-bezier(.22,.68,0,1.2) both}
+
+/* ── STORE ITEMS ── */
+.store-item{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--g50)}
+.store-item:last-child{border:none}
+.s-img{width:44px;height:44px;border-radius:11px;background:var(--g50);border:1.5px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.s-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.s-sub{font-size:11px;color:var(--color-text-secondary)}
+.s-price{font-size:14px;font-weight:500;color:var(--g600)}
+
+/* ── CHAT ── */
+.chat{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.msg{max-width:82%;padding:10px 13px;border-radius:15px;font-size:13px;line-height:1.5}
+.msg.ai{background:var(--card);border:1.5px solid var(--brd2);align-self:flex-start;border-bottom-left-radius:4px;animation:slideRight .3s ease both}
+.msg.usr{background:var(--g600);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;animation:slideLeft .3s ease both}
+
+/* ── EXPERT CARDS ── */
+.ex-card{background:var(--card);border:1.5px solid var(--brd);border-radius:var(--radius);padding:12px 13px;margin-bottom:10px;display:flex;gap:10px;align-items:center;transition:border-color .15s,transform .12s}
+.ex-card:active{border-color:var(--brd2);transform:scale(.98)}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0;border:2px solid}
+
+/* ── COMMUNITY POSTS ── */
+.post{background:var(--card);border:1.5px solid var(--brd);border-radius:var(--radius);padding:13px;margin-bottom:10px;transition:border-color .15s}
+.post:active{border-color:var(--brd2)}
+.post-btn{padding:5px 10px;border:1.5px solid var(--brd);border-radius:8px;font-size:12px;cursor:pointer;background:none;color:var(--color-text-secondary);display:inline-flex;align-items:center;gap:4px;transition:background .15s}
+.post-btn:active{background:var(--g50);border-color:var(--brd2);transform:scale(.93)}
+
+/* ── DIAGNOSIS ── */
+.diag{background:var(--card);border:1.5px solid var(--r100);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+.diag-hdr{background:var(--r50);padding:12px 14px;border-bottom:1px solid var(--r100)}
+.diag-row{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--g50);font-size:13px}
+.diag-row:last-child{border:none}
+
+/* ── PHOTO DROP ── */
+.photo-drop{border:2px dashed #B4B2A9;border-radius:var(--radius);padding:22px;text-align:center;cursor:pointer;background:var(--g50);transition:border-color .15s,background .15s;margin-bottom:10px}
+.photo-drop:active{border-color:var(--g400);background:var(--g100)}
+
+/* ── INPUTS ── */
+.inp-lbl{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:5px}
+.inp{width:100%;padding:11px 13px;border:1.5px solid var(--brd);border-radius:11px;font-size:14px;background:var(--card);color:var(--color-text-primary);outline:none;transition:border-color .15s}
+.inp:focus{border-color:var(--g400)}
+.inp-row{margin-bottom:12px}
+
+/* ── CHIPS ── */
+.chip-row{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:6px 12px;border-radius:var(--radius-pill);font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--brd);background:var(--card);color:var(--color-text-secondary);transition:all .15s}
+.chip.sel{background:var(--g50);border-color:var(--g400);color:var(--g800)}
+.chip:active{transform:scale(.93)}
+
+/* ── COUNTER ── */
+.counter{display:flex;align-items:center;gap:12px}
+.cnt-btn{width:38px;height:38px;border:2px solid var(--g400);border-radius:10px;background:var(--card);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--g600);font-weight:500;transition:background .15s,transform .1s}
+.cnt-btn:active{background:var(--g50);transform:scale(.88)}
+.cnt-val{font-size:24px;font-weight:500;min-width:34px;text-align:center;color:var(--color-text-primary)}
+
+/* ── TOGGLE ── */
+.toggle{width:42px;height:23px;background:#D3D1C7;border-radius:100px;position:relative;cursor:pointer;border:1.5px solid #B4B2A9;transition:background .22s}
+.toggle.on{background:var(--g400);border-color:var(--g600)}
+.toggle::after{content:'';width:17px;height:17px;background:#fff;border-radius:50%;position:absolute;top:1px;left:1px;transition:left .22s cubic-bezier(.22,.68,0,1.2)}
+.toggle.on::after{left:20px}
+
+/* ── LANG GRID ── */
+.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lang-btn{padding:10px 8px;border:1.5px solid var(--brd);border-radius:11px;text-align:center;cursor:pointer;background:var(--card);transition:all .15s}
+.lang-btn.sel{border-color:var(--g400);background:var(--g50)}
+.lang-btn:active{transform:scale(.95)}
+
+/* ── INFO BOXES ── */
+.info-g{background:var(--g50);border:1.5px solid var(--brd);border-radius:12px;padding:11px 13px;margin-bottom:10px}
+.info-a{background:var(--a50);border:1.5px solid var(--a100);border-radius:12px;padding:11px 13px;margin-bottom:10px}
+.info-b{background:var(--b50);border:1.5px solid var(--b100);border-radius:12px;padding:11px 13px;margin-bottom:10px}
+.info-r{background:var(--r50);border:1.5px solid var(--r100);border-radius:12px;padding:11px 13px;margin-bottom:10px}
+
+/* ── REPORT BARS ── */
+.rb-row{margin-bottom:9px}
+.rb-track{height:10px;background:var(--g50);border-radius:100px;overflow:hidden;border:1px solid var(--brd);margin-top:4px}
+.rb-fill{height:100%;border-radius:100px;animation:progGrow .7s cubic-bezier(.22,.68,0,1.2) both}
+
+/* ── DIVIDER ── */
+.div{height:1px;background:var(--g50);margin:8px 0}
+
+/* ── SCHEME CARDS ── */
+.scheme-card{background:var(--card);border:1.5px solid var(--brd);border-radius:var(--radius);padding:13px;margin-bottom:10px;transition:border-color .15s,transform .12s}
+.scheme-card:active{border-color:var(--brd2);transform:scale(.98)}
+
+/* ── SENTIMENT ── */
+.sent-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--g50)}
+.sent-row:last-child{border:none}
+.sent-bar{height:6px;background:var(--g50);border-radius:100px;overflow:hidden;border:1px solid var(--brd);margin-top:3px}
+.sent-fill{height:100%;border-radius:100px;animation:progGrow .7s cubic-bezier(.22,.68,0,1.2) both}
+
+/* ── MAP SVG ── */
+.map-box{background:var(--g50);border:2px solid var(--brd);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+
+/* ── MEDIA QUERIES ── */
+@media(max-width:420px){
+  .phone{border-radius:24px}
+  .hero-name{font-size:19px}
+  .w-temp{font-size:32px}
+  .hbox-val{font-size:17px}
+  .sbox-val{font-size:18px}
+  .qa-ico{width:36px;height:36px;font-size:19px}
+}
+@media(max-width:360px){
+  .phone{border-radius:18px}
+  .pad{padding:11px}
+  .hero{padding:13px 13px 17px}
+  .qa-grid{gap:7px}
+  .hero-row{gap:6px}
+  .hbox{padding:8px 5px}
+  .hbox-val{font-size:15px}
+}
+@media(min-width:440px){
+  .phone{width:420px}
+  .qa-ico{width:46px;height:46px;font-size:24px}
+  .hero-name{font-size:24px}
+}
+@media(min-width:520px){
+  .phone{width:460px}
+  .pad{padding:16px}
+}
+</style>
+
+<h2 class="sr-only">Kisan Smart — animated mobile farmer analytics app</h2>
+
+<div class="phone" id="APP">
+  <div class="sbar">
+    <span class="sbar-l">9:41 AM</span>
+    <div class="sbar-r">
+      <div class="noti-dot"></div>
+      <i class="ti ti-wifi" aria-hidden="true"></i>
+      <i class="ti ti-battery-2" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div class="screen" id="SCR">
+
+    <!-- ════ HOME ════ -->
+    <div class="pg act" id="pg-home">
+      <div class="hero ani-fadein">
+        <div class="hero-pill ani-fadeup"><i class="ti ti-plant-2" aria-hidden="true"></i> Kharif 2026 · Active</div>
+        <div class="hero-name">Raju Reddy <span style="font-size:14px;opacity:.7">👋</span></div>
+        <div class="hero-sub ani-fadeup d1">Warangal, Telangana · Cotton · 3.2 acres</div>
+        <div class="hero-row">
+          <div class="hbox d2"><div class="hbox-val">42</div><div class="hbox-lbl">Season day</div></div>
+          <div class="hbox d3"><div class="hbox-val">₹18.4k</div><div class="hbox-lbl">Spent</div></div>
+          <div class="hbox d4"><div class="hbox-val">78</div><div class="hbox-lbl">Days left</div></div>
+        </div>
+      </div>
+
+      <div class="pad">
+        <div class="sec-hd ani-fadeup d1"><div class="sec-title">Today's alerts</div><span class="sec-link" onclick="nav('calendar')">See all →</span></div>
+
+        <div class="alert amber ani-slide-r d2" onclick="nav('calendar')">
+          <div class="alert-ico"><i class="ti ti-droplet" aria-hidden="true"></i></div>
+          <div style="flex:1"><div class="a-t">Irrigation due today</div><div class="a-s">Plot A · Cotton · Soil moisture low</div></div>
+          <i class="ti ti-chevron-right" style="font-size:16px;color:var(--a400)" aria-hidden="true"></i>
+        </div>
+        <div class="alert red ani-slide-r d3" onclick="nav('diagnosis')">
+          <div class="alert-ico"><i class="ti ti-bug" aria-hidden="true"></i></div>
+          <div style="flex:1"><div class="a-t">Pest risk · aphid pressure high</div><div class="a-s">Humidity 72% · Scan your leaves</div></div>
+          <button class="btn-sm r" style="flex-shrink:0;padding:5px 10px"><i class="ti ti-camera"></i></button>
+        </div>
+        <div class="alert green ani-slide-r d4" onclick="nav('market')">
+          <div class="alert-ico"><i class="ti ti-trending-up" aria-hidden="true"></i></div>
+          <div style="flex:1"><div class="a-t">Cotton up ₹120 today</div><div class="a-s">Warangal APMC · best this week</div></div>
+          <span class="badge green">▲ ₹120</span>
+        </div>
+        <div class="alert blue ani-slide-r d5">
+          <div class="alert-ico"><i class="ti ti-cloud-rain" aria-hidden="true"></i></div>
+          <div style="flex:1"><div class="a-t">5mm rain forecast tomorrow</div><div class="a-s">Jun 5 spray auto-rescheduled → Jun 6</div></div>
+          <span class="badge blue">Auto</span>
+        </div>
+
+        <div class="sec-hd" style="margin-top:4px"><div class="sec-title">Quick actions</div></div>
+        <div class="qa-grid">
+          <div class="qa ani-popIn d1" onclick="nav('tracker')">
+            <div class="qa-ico" style="background:var(--g50);border:1.5px solid var(--brd)"><i class="ti ti-clipboard-list" style="color:var(--g600)" aria-hidden="true"></i></div>
+            <div class="qa-title">Daily log</div><div class="qa-sub">Add today's work</div>
+          </div>
+          <div class="qa ani-popIn d2" onclick="nav('diagnosis')">
+            <div class="qa-ico" style="background:var(--r50);border:1.5px solid var(--r100)"><i class="ti ti-camera" style="color:var(--r600)" aria-hidden="true"></i></div>
+            <div class="qa-title">AI crop scan</div><div class="qa-sub">Detect diseases</div>
+          </div>
+          <div class="qa ani-popIn d3" onclick="nav('market')">
+            <div class="qa-ico" style="background:var(--a50);border:1.5px solid var(--a100)"><i class="ti ti-currency-rupee" style="color:var(--a600)" aria-hidden="true"></i></div>
+            <div class="qa-title">Mandi prices</div><div class="qa-sub">Live rates today</div>
+          </div>
+          <div class="qa ani-popIn d4" onclick="nav('store')">
+            <div class="qa-ico" style="background:var(--b50);border:1.5px solid var(--b100)"><i class="ti ti-shopping-cart" style="color:var(--b600)" aria-hidden="true"></i></div>
+            <div class="qa-title">Agri store</div><div class="qa-sub">Buy, home delivery</div>
+          </div>
+        </div>
+
+        <div class="sec-hd"><div class="sec-title">Weather</div></div>
+        <div class="wband ani-fadeup">
+          <div>
+            <div class="w-loc"><i class="ti ti-map-pin" style="font-size:11px" aria-hidden="true"></i> Warangal, Telangana</div>
+            <div class="w-temp">34°C</div>
+            <div class="w-info">Partly cloudy · Humidity 72%<br>Wind 12 km/h · <span class="w-safe">✓ Safe to spray</span></div>
+          </div>
+          <div style="text-align:right">
+            <i class="ti ti-cloud" style="font-size:44px;color:rgba(255,255,255,.55)" aria-hidden="true"></i>
+            <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px">5mm rain<br>tomorrow</div>
+          </div>
+        </div>
+        <div class="wdays">
+          <div class="wday ani-popIn d1"><div class="wd-n">Mon</div><i class="ti ti-sun" style="font-size:15px;color:var(--a400)" aria-hidden="true"></i><div class="wd-t">36°</div><div class="wd-r">0mm</div></div>
+          <div class="wday ani-popIn d2"><div class="wd-n">Tue</div><i class="ti ti-cloud-rain" style="font-size:15px;color:var(--b400)" aria-hidden="true"></i><div class="wd-t">31°</div><div class="wd-r">5mm</div></div>
+          <div class="wday ani-popIn d3"><div class="wd-n">Wed</div><i class="ti ti-cloud" style="font-size:15px;color:#888" aria-hidden="true"></i><div class="wd-t">33°</div><div class="wd-r">2mm</div></div>
+          <div class="wday ani-popIn d4"><div class="wd-n">Thu</div><i class="ti ti-sun" style="font-size:15px;color:var(--a400)" aria-hidden="true"></i><div class="wd-t">37°</div><div class="wd-r">0mm</div></div>
+        </div>
+
+        <div class="sec-hd"><div class="sec-title">Season progress</div><span class="sec-link" onclick="nav('more')">Report →</span></div>
+        <div class="stat2">
+          <div class="sbox"><div class="sbox-lbl">Total cost</div><div class="sbox-val">₹18,400</div></div>
+          <div class="sbox"><div class="sbox-lbl">Net profit est.</div><div class="sbox-val g">₹33k</div></div>
+          <div class="sbox"><div class="sbox-lbl">Yield est.</div><div class="sbox-val">8.4 q</div></div>
+          <div class="sbox"><div class="sbox-lbl">Days left</div><div class="sbox-val">78</div></div>
+        </div>
+        <div class="prog-lbl"><span>Day 42 of 120</span><span>35%</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="--w:35%"></div></div>
+
+        <div class="map-box" style="margin-top:14px">
+          <svg viewBox="0 0 360 110" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:110px">
+            <rect x="8" y="8" width="215" height="94" rx="8" fill="#EAF3DE" stroke="#97C459" stroke-width="2"/>
+            <text x="115" y="50" text-anchor="middle" font-size="13" fill="#27500A" font-weight="500">Plot A</text>
+            <text x="115" y="66" text-anchor="middle" font-size="11" fill="#3B6D11">Cotton · 2.0 acres</text>
+            <text x="115" y="80" text-anchor="middle" font-size="10" fill="#639922">Day 42 · Vegetative</text>
+            <rect x="231" y="8" width="121" height="94" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="2"/>
+            <text x="291" y="50" text-anchor="middle" font-size="13" fill="#633806" font-weight="500">Plot B</text>
+            <text x="291" y="66" text-anchor="middle" font-size="11" fill="#854F0B">Chilli · 1.2 acres</text>
+            <text x="291" y="80" text-anchor="middle" font-size="10" fill="#BA7517">Day 28 · Vegetative</text>
+          </svg>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- ════ TRACKER ════ -->
+    <div class="pg" id="pg-tracker">
+      <div class="pg-hdr">
+        <div class="pg-back"><button class="back-btn" onclick="nav('home')" aria-label="Back"><i class="ti ti-arrow-left" aria-hidden="true"></i> Home</button></div>
+        <div class="pg-title">Season tracker</div>
+        <div class="pg-sub">Cotton · Plot A · Day 42 of 120</div>
+      </div>
+      <div class="tabbar">
+        <div class="tab act" onclick="stab(this,'tr-pre')">Pre-sowing</div>
+        <div class="tab" onclick="stab(this,'tr-daily')">Daily log</div>
+        <div class="tab" onclick="stab(this,'tr-inputs')">Inputs</div>
+      </div>
+      <div class="pad">
+        <div id="tr-pre" class="sp act">
+          <div class="inp-row"><div class="inp-lbl">Crop variety</div><input class="inp" value="RCH-2 Bt Cotton"></div>
+          <div class="inp-row">
+            <div class="inp-lbl">Times ploughed</div>
+            <div class="counter">
+              <button class="cnt-btn" onclick="adj('plough',-1)" aria-label="Decrease">−</button>
+              <span class="cnt-val" id="plough">3</span>
+              <button class="cnt-btn" onclick="adj('plough',1)" aria-label="Increase">+</button>
+              <span style="font-size:12px;color:var(--color-text-secondary)">sessions</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="inp-row">
+            <div><div class="inp-lbl">Sowing date</div><input type="date" class="inp" value="2026-04-18"></div>
+            <div><div class="inp-lbl">Method</div><select class="inp"><option>Dibbling</option><option>Broadcast</option><option>Drill</option></select></div>
+          </div>
+          <div class="stat2">
+            <div class="sbox"><div class="sbox-lbl">Purchased</div><div class="sbox-val">18 kg</div></div>
+            <div class="sbox"><div class="sbox-lbl">Rate / acre</div><div class="sbox-val">4.5 kg</div><div style="font-size:10px;color:var(--g600);margin-top:2px">✓ On target</div></div>
+          </div>
+          <div class="info-g">
+            <div style="font-size:12px;font-weight:500;color:var(--g800)"><i class="ti ti-test-pipe" aria-hidden="true"></i> Soil health card read</div>
+            <div style="font-size:12px;color:var(--g600);margin-top:3px">pH 7.2 · N: Medium · P: Low · K: High — Phosphorus top-dressing recommended</div>
+          </div>
+          <button class="btn-pri"><i class="ti ti-device-floppy" aria-hidden="true"></i> Save pre-sowing record</button>
+        </div>
+
+        <div id="tr-daily" class="sp">
+          <div class="inp-row"><div class="inp-lbl">Activity type</div><select class="inp"><option>Irrigation</option><option>Fertiliser</option><option>Pesticide spray</option><option>Weeding</option><option>Scouting</option><option>Harvesting</option></select></div>
+          <div class="inp-row"><div class="inp-lbl">Crop growth stage</div>
+            <div class="chip-row">
+              <div class="chip sel" onclick="selChip(this)">Vegetative</div>
+              <div class="chip" onclick="selChip(this)">Flowering</div>
+              <div class="chip" onclick="selChip(this)">Boll fill</div>
+              <div class="chip" onclick="selChip(this)">Maturity</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="inp-row">
+            <div><div class="inp-lbl">Labour (persons)</div><input type="number" class="inp" value="2"></div>
+            <div><div class="inp-lbl">Wage ₹/day</div><input type="number" class="inp" value="300"></div>
+          </div>
+          <div class="inp-row"><div class="inp-lbl">Crop health today</div>
+            <div class="chip-row">
+              <div class="chip sel" onclick="selChip(this)">Healthy</div>
+              <div class="chip" onclick="selChip(this)">Stressed</div>
+              <div class="chip" onclick="selChip(this)" style="color:var(--r600);border-color:var(--r100)">Diseased</div>
+            </div>
+          </div>
+          <div class="div"></div>
+          <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px">Recent entries</div>
+          <div class="cal-item"><div class="cal-dt"><div class="cal-dd">27</div><div class="cal-mm">May</div></div><div class="cal-body"><div class="cal-t">Irrigation · Borewell · 3 hrs</div><div class="cal-s">2 workers · ₹600 labour</div></div><span class="badge green">Done</span></div>
+          <div class="cal-item"><div class="cal-dt"><div class="cal-dd">25</div><div class="cal-mm">May</div></div><div class="cal-body"><div class="cal-t">Urea top dressing · 25 kg</div><div class="cal-s">Plot A+B · ₹540</div></div><span class="badge teal">Logged</span></div>
+          <div class="cal-item"><div class="cal-dt"><div class="cal-dd">22</div><div class="cal-mm">May</div></div><div class="cal-body"><div class="cal-t">Profenofos spray · 1L</div><div class="cal-s">PHI 28 days active</div></div><span class="badge red">PHI on</span></div>
+          <button class="btn-pri" style="margin-top:10px"><i class="ti ti-plus" aria-hidden="true"></i> Save today's entry</button>
+        </div>
+
+        <div id="tr-inputs" class="sp">
+          <div class="stat2">
+            <div class="sbox"><div class="sbox-lbl">Seeds</div><div class="sbox-val">₹3,200</div></div>
+            <div class="sbox"><div class="sbox-lbl">Fertilisers</div><div class="sbox-val">₹4,100</div></div>
+            <div class="sbox"><div class="sbox-lbl">Pesticides</div><div class="sbox-val">₹2,800</div></div>
+            <div class="sbox"><div class="sbox-lbl">Labour</div><div class="sbox-val">₹6,400</div></div>
+          </div>
+          <div class="div"></div>
+          <div class="store-item"><div class="s-img"><i class="ti ti-leaf" style="color:var(--g600)" aria-hidden="true"></i></div><div style="flex:1"><div class="s-name">Urea (46-0-0)</div><div class="s-sub">3 applications · 75 kg total</div><div class="s-price">₹1,350</div></div></div>
+          <div class="store-item"><div class="s-img"><i class="ti ti-droplet" style="color:var(--a600)" aria-hidden="true"></i></div><div style="flex:1"><div class="s-name">DAP (18-46-0)</div><div class="s-sub">1 application · 50 kg</div><div class="s-price">₹1,400</div></div></div>
+          <div class="store-item"><div class="s-img"><i class="ti ti-bug" style="color:var(--r600)" aria-hidden="true"></i></div><div style="flex:1"><div class="s-name">Profenofos 50EC</div><div class="s-sub">1 spray · PHI 28d active</div><div class="s-price">₹980</div></div><span class="badge red">PHI</span></div>
+          <button class="btn-pri" style="margin-top:10px"><i class="ti ti-plus" aria-hidden="true"></i> Add input used</button>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- ════ DIAGNOSIS ════ -->
+    <div class="pg" id="pg-diagnosis">
+      <div class="pg-hdr">
+        <div class="pg-back"><button class="back-btn" onclick="nav('home')" aria-label="Back"><i class="ti ti-arrow-left" aria-hidden="true"></i> Home</button></div>
+        <div class="pg-title">AI plant diagnosis</div>
+        <div class="pg-sub">Scan · Detect · Treat</div>
+      </div>
+      <div class="tabbar">
+        <div class="tab act" onclick="stab(this,'dx-scan')">Scan</div>
+        <div class="tab" onclick="stab(this,'dx-result')">AI result</div>
+        <div class="tab" onclick="stab(this,'dx-expert')">Experts</div>
+        <div class="tab" onclick="stab(this,'dx-forum')">Community</div>
+      </div>
+      <div class="pad">
+        <div id="dx-scan" class="sp act">
+          <div class="photo-drop ani-popIn"><i class="ti ti-camera" style="font-size:32px;color:var(--color-text-secondary)" aria-hidden="true"></i><div style="font-size:14px;font-weight:500;margin-top:8px;color:var(--color-text-primary)">Tap — photograph leaf close-up</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:4px">Affected area · Good light</div></div>
+          <div class="photo-drop"><i class="ti ti-plant" style="font-size:30px;color:var(--color-text-secondary)" aria-hidden="true"></i><div style="font-size:14px;font-weight:500;margin-top:6px;color:var(--color-text-primary)">Tap — photograph whole plant</div></div>
+          <div class="inp-row"><div class="inp-lbl">Your crop</div><select class="inp"><option>Cotton</option><option>Paddy</option><option>Tomato</option><option>Chilli</option><option>Wheat</option><option>Groundnut</option><option>Sugarcane</option></select></div>
+          <div class="inp-row"><div class="inp-lbl">Affected part</div>
+            <div class="chip-row">
+              <div class="chip sel" onclick="selChip(this)">Leaves</div>
+              <div class="chip" onclick="selChip(this)">Stem</div>
+              <div class="chip" onclick="selChip(this)">Fruit/boll</div>
+              <div class="chip" onclick="selChip(this)">Root</div>
+            </div>
+          </div>
+          <button class="btn-pri" onclick="stab(document.querySelectorAll('#pg-diagnosis .tab')[1],'dx-result')"><i class="ti ti-analyze" aria-hidden="true"></i> Analyse with AI</button>
+          <div class="info-g" style="margin-top:10px">
+            <div style="font-size:12px;font-weight:500;color:var(--g800)">Last scan · 22 May</div>
+            <div style="font-size:12px;color:var(--g600);margin-top:2px">Cotton · Aphid infestation · Treated ✓</div>
+          </div>
+        </div>
+
+        <div id="dx-result" class="sp">
+          <div class="diag ani-popIn">
+            <div class="diag-hdr">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-size:16px;font-weight:500;color:var(--r600)">Aphid infestation</div>
+                <span class="badge red">92% match</span>
+              </div>
+              <div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">Cotton · Leaf · 22 May 2026</div>
+            </div>
+            <div class="diag-row"><span style="color:var(--color-text-secondary)">Cause</span><span>Aphis gossypii (insect)</span></div>
+            <div class="diag-row"><span style="color:var(--color-text-secondary)">Severity</span><span class="badge amber">Moderate</span></div>
+            <div class="diag-row"><span style="color:var(--color-text-secondary)">Spread risk</span><span class="badge red">High</span></div>
+            <div class="diag-row"><span style="color:var(--color-text-secondary)">Stage</span><span>Vegetative · Day 34</span></div>
+          </div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:8px;color:var(--g800)">AI follow-up</div>
+          <div class="chat">
+            <div class="msg ai">Are the leaves curling inward or downward?</div>
+            <div class="msg usr">Curling inward — very sticky</div>
+            <div class="msg ai">Can you see ants on the stems? They protect aphid colonies.</div>
+            <div class="msg usr">Yes, many ants near the base</div>
+            <div class="msg ai">Confirmed: heavy colony. Treat immediately. See plan below.</div>
+          </div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:8px;color:var(--g800)">Treatment plan</div>
+          <div class="alert green ani-slide-r" style="margin-bottom:8px"><div class="alert-ico"><i class="ti ti-leaf" aria-hidden="true"></i></div><div style="flex:1"><div class="a-t">Organic: Neem oil 5000 ppm</div><div class="a-s">5ml/L water · 2 sprays, 5 days apart</div></div><span class="badge green">Try first</span></div>
+          <div class="alert amber ani-slide-r d2"><div class="alert-ico"><i class="ti ti-droplet" aria-hidden="true"></i></div><div style="flex:1"><div class="a-t">Chemical: Imidacloprid 17.8 SL</div><div class="a-s">0.3ml/L · PHI 35 days</div></div><span class="badge amber">If severe</span></div>
+          <button class="btn-pri" style="margin-top:10px" onclick="nav('store')"><i class="ti ti-shopping-cart" aria-hidden="true"></i> Buy neem oil in store</button>
+          <button class="btn-sec" onclick="stab(document.querySelectorAll('#pg-diagnosis .tab')[2],'dx-expert')"><i class="ti ti-video" aria-hidden="true"></i> Talk to agronomist</button>
+        </div>
+
+        <div id="dx-expert" class="sp">
+          <div class="ex-card ani-fadeup d1">
+            <div class="av" style="width:46px;height:46px;background:var(--b50);color:var(--b600);border-color:var(--b100)">DR</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:500">Dr. Ramesh Kumar</div>
+              <div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">Cotton & Pulses · Telugu, Hindi</div>
+              <div style="display:flex;gap:6px;margin-top:5px;align-items:center"><span class="badge green">Available now</span><span style="font-size:11px;color:var(--color-text-secondary)">★ 4.8 · ₹100/15m</span></div>
+            </div>
+            <button class="btn-sm g"><i class="ti ti-video" aria-hidden="true"></i> Call</button>
+          </div>
+          <div class="ex-card ani-fadeup d2">
+            <div class="av" style="width:46px;height:46px;background:var(--a50);color:var(--a600);border-color:var(--a100)">PS</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:500">Prof. Sunita Patil</div>
+              <div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">Horticulture · Marathi, Hindi</div>
+              <div style="display:flex;gap:6px;margin-top:5px;align-items:center"><span class="badge blue">In 20 min</span><span style="font-size:11px;color:var(--color-text-secondary)">★ 4.9 · ₹150/15m</span></div>
+            </div>
+            <button class="btn-sm b"><i class="ti ti-calendar" aria-hidden="true"></i> Book</button>
+          </div>
+          <div class="ex-card ani-fadeup d3">
+            <div class="av" style="width:46px;height:46px;background:var(--g50);color:var(--g600);border-color:var(--brd)">KCC</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:500">Anil Varma · Govt.</div>
+              <div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">Telangana Agri Dept · Telugu</div>
+              <div style="display:flex;gap:6px;margin-top:5px;align-items:center"><span class="badge teal">Free · KCC</span><span style="font-size:11px;color:var(--color-text-secondary)">★ 4.5</span></div>
+            </div>
+            <button class="btn-sm g"><i class="ti ti-video" aria-hidden="true"></i> Call</button>
+          </div>
+        </div>
+
+        <div id="dx-forum" class="sp">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="font-size:14px;font-weight:500">Telangana Cotton Farmers</div>
+            <button class="btn-sm g"><i class="ti ti-plus" aria-hidden="true"></i> Post</button>
+          </div>
+          <div class="post ani-fadeup d1">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <div class="av" style="width:34px;height:34px;font-size:12px;background:var(--b50);color:var(--b600);border-color:var(--b100)">SK</div>
+              <div><div style="font-size:13px;font-weight:500">Suresh Kumar</div><div style="font-size:11px;color:var(--color-text-secondary)">2 hrs · Karimnagar</div></div>
+              <span class="badge red" style="margin-left:auto">Disease</span>
+            </div>
+            <div style="font-size:13px;line-height:1.5">Cotton leaves have brown spots from edges. My neighbour has same problem. Is this leaf blight?</div>
+            <div style="background:var(--g50);border:1.5px solid var(--brd);border-radius:9px;height:50px;display:flex;align-items:center;justify-content:center;margin-top:8px;font-size:12px;color:var(--g600)"><i class="ti ti-photo" aria-hidden="true"></i> &nbsp;2 photos</div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="post-btn"><i class="ti ti-thumb-up" aria-hidden="true"></i> 14</button>
+              <button class="post-btn"><i class="ti ti-message" aria-hidden="true"></i> 6</button>
+              <button class="post-btn"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Share</button>
+            </div>
+          </div>
+          <div class="post ani-fadeup d2" style="border-color:var(--brd2)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <div class="av" style="width:34px;height:34px;font-size:12px;background:var(--g50);color:var(--g600);border-color:var(--brd)">DR</div>
+              <div><div style="font-size:13px;font-weight:500">Dr. Ramesh <i class="ti ti-rosette" style="font-size:12px;color:var(--g600)" aria-hidden="true"></i></div><div style="font-size:11px;color:var(--color-text-secondary)">1 hr · Verified expert</div></div>
+              <span class="badge teal" style="margin-left:auto">Best answer</span>
+            </div>
+            <div style="font-size:13px;line-height:1.5">Alternaria leaf spot. Spray Mancozeb 75 WP at 2.5 g/L. Early morning only. No irrigation 24 hrs after.</div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="post-btn"><i class="ti ti-thumb-up" aria-hidden="true"></i> 31</button>
+              <button class="post-btn"><i class="ti ti-check" style="color:var(--g600)" aria-hidden="true"></i> Verified</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- ════ CALENDAR ════ -->
+    <div class="pg" id="pg-calendar">
+      <div class="pg-hdr" style="padding-bottom:14px">
+        <div class="pg-back"><button class="back-btn" onclick="nav('home')" aria-label="Back"><i class="ti ti-arrow-left" aria-hidden="true"></i> Home</button></div>
+        <div class="pg-title">Smart crop calendar</div>
+        <div class="pg-sub">Cotton · Auto-generated · Weather adaptive</div>
+        <div style="display:flex;gap:5px;margin-top:10px;overflow-x:auto;padding-bottom:2px">
+          <div style="flex-shrink:0;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:9px;padding:5px 8px;text-align:center;min-width:40px"><div style="font-size:9px;color:rgba(255,255,255,.7)">Mon</div><div style="font-size:14px;font-weight:500;color:#fff">27</div></div>
+          <div style="flex-shrink:0;background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.55);border-radius:9px;padding:5px 8px;text-align:center;min-width:40px"><div style="font-size:9px;color:rgba(255,255,255,.8)">Today</div><div style="font-size:14px;font-weight:500;color:#fff">28</div></div>
+          <div style="flex-shrink:0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:5px 8px;text-align:center;min-width:40px"><div style="font-size:9px;color:rgba(255,255,255,.7)">Wed</div><div style="font-size:14px;font-weight:500;color:#fff">29</div></div>
+          <div style="flex-shrink:0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:5px 8px;text-align:center;min-width:40px"><div style="font-size:9px;color:rgba(255,255,255,.7)">Thu</div><div style="font-size:14px;font-weight:500;color:#fff">30</div></div>
+          <div style="flex-shrink:0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:5px 8px;text-align:center;min-width:40px"><div style="font-size:9px;color:rgba(255,255,255,.7)">Fri</div><div style="font-size:14px;font-weight:500;color:#fff">31</div></div>
+          <div style="flex-shrink:0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:5px 8px;text-align:center;min-width:40px"><div style="font-size:9px;color:rgba(255,255,255,.7)">Sat</div><div style="font-size:14px;font-weight:500;color:#fff">01</div></div>
+        </div>
+      </div>
+      <div class="pad">
+        <div class="chip-row" style="margin-bottom:14px">
+          <div class="chip sel" onclick="selChip(this)">All</div>
+          <div class="chip" onclick="selChip(this)">Spray</div>
+          <div class="chip" onclick="selChip(this)">Fertiliser</div>
+          <div class="chip" onclick="selChip(this)">Irrigation</div>
+          <div class="chip" onclick="selChip(this)">Harvest</div>
+        </div>
+        <div class="card ani-fadeup d1">
+          <div class="cal-item"><div class="cal-dt"><div class="cal-dd">28</div><div class="cal-mm">May</div></div><div class="cal-body"><div class="cal-t"><i class="ti ti-droplet" style="font-size:13px;color:var(--b400)" aria-hidden="true"></i> Irrigation required</div><div class="cal-s">Plot A · Soil moisture low</div></div><span class="badge red">Today</span></div>
+          <div class="cal-item"><div class="cal-dt"><div class="cal-dd">31</div><div class="cal-mm">May</div></div><div class="cal-body"><div class="cal-t"><i class="ti ti-plant-2" style="font-size:13px;color:var(--g400)" aria-hidden="true"></i> 2nd top dressing · Urea</div><div class="cal-s">25 kg/acre · ₹540 est.</div></div><span class="badge amber">4 days</span></div>
+          <div class="cal-item"><div class="cal-dt"><div class="cal-dd">05</div><div class="cal-mm">Jun</div></div><div class="cal-body"><div class="cal-t"><i class="ti ti-bug" style="font-size:13px;color:var(--r400)" aria-hidden="true"></i> Preventive spray · Aphid</div><div class="cal-s">Imidacloprid 0.3ml/L</div></div><span class="badge blue">9 days</span></div>
+          <div class="cal-item"><div class="cal-dt"><div class="cal-dd">10</div><div class="cal-mm">Jun</div></div><div class="cal-body"><div class="cal-t"><i class="ti ti-flower" style="font-size:13px;color:var(--a400)" aria-hidden="true"></i> Flowering · no spray</div><div class="cal-s">Protect pollinators</div></div><span class="badge amber">14 days</span></div>
+          <div class="cal-item"><div class="cal-dt"><div class="cal-dd">20</div><div class="cal-mm">Aug</div></div><div class="cal-body"><div class="cal-t"><i class="ti ti-scissors" style="font-size:13px;color:var(--g600)" aria-hidden="true"></i> First picking window</div><div class="cal-s">Moisture 8–10% · Check PHI</div></div><span class="badge teal">85 days</span></div>
+        </div>
+        <div class="info-a ani-fadeup d2">
+          <div style="font-size:12px;font-weight:500;color:var(--a600)"><i class="ti ti-cloud-rain" aria-hidden="true"></i> Weather reschedule</div>
+          <div style="font-size:12px;color:var(--a600);margin-top:3px">Jun 5 spray shifted to Jun 6 — 5mm rain expected. 24-hr alert will be sent.</div>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- ════ MARKET ════ -->
+    <div class="pg" id="pg-market">
+      <div class="pg-hdr">
+        <div class="pg-back"><button class="back-btn" onclick="nav('home')" aria-label="Back"><i class="ti ti-arrow-left" aria-hidden="true"></i> Home</button></div>
+        <div class="pg-title">Live mandi prices</div>
+        <div class="pg-sub">Agmarknet · Updated 8:30 AM today</div>
+      </div>
+      <div class="pad">
+        <div class="stat2 ani-popIn">
+          <div class="sbox"><div class="sbox-lbl">Cotton · Warangal</div><div class="sbox-val g">₹6,120</div><div style="font-size:10px;color:var(--g600)">▲ ₹120 today</div></div>
+          <div class="sbox"><div class="sbox-lbl">Your profit est.</div><div class="sbox-val g">₹33,008</div><div style="font-size:10px;color:var(--t400)">↑ 18% vs last yr</div></div>
+        </div>
+        <div class="price-card ani-fadeup d2">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px"><div style="font-size:15px;font-weight:500">Cotton (Seed)</div><span class="badge green">▲ ₹120</span></div>
+          <div style="font-size:11px;color:var(--color-text-secondary);display:flex;gap:4px;align-items:center"><i class="ti ti-map-pin" style="font-size:11px" aria-hidden="true"></i> Warangal APMC · 2.4 km</div>
+          <div class="pc-vals">
+            <div class="pv"><div class="pv-lbl">Min</div><div class="pv-num">₹5,840</div></div>
+            <div class="pv hi"><div class="pv-lbl">Modal</div><div class="pv-num">₹6,120</div></div>
+            <div class="pv"><div class="pv-lbl">Max</div><div class="pv-num">₹6,300</div></div>
+            <div class="pv"><div class="pv-lbl">Unit</div><div class="pv-num" style="font-size:12px">₹/q</div></div>
+          </div>
+        </div>
+        <div class="price-card ani-fadeup d3">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px"><div style="font-size:15px;font-weight:500">Cotton</div><span class="badge amber">Stable</span></div>
+          <div style="font-size:11px;color:var(--color-text-secondary);display:flex;gap:4px;align-items:center"><i class="ti ti-map-pin" style="font-size:11px" aria-hidden="true"></i> Karimnagar APMC · 38 km</div>
+          <div class="pc-vals">
+            <div class="pv"><div class="pv-lbl">Min</div><div class="pv-num">₹5,700</div></div>
+            <div class="pv"><div class="pv-lbl">Modal</div><div class="pv-num">₹5,980</div></div>
+            <div class="pv"><div class="pv-lbl">Max</div><div class="pv-num">₹6,100</div></div>
+            <div class="pv"><div class="pv-lbl">Unit</div><div class="pv-num" style="font-size:12px">₹/q</div></div>
+          </div>
+        </div>
+        <div class="chart-wrap ani-fadeup d4">
+          <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px">30-day trend · Cotton · Warangal</div>
+          <div class="bars">
+            <div class="bar bar-anim" style="--h:55%;height:55%;background:var(--g50);border-top-color:var(--g400)"></div>
+            <div class="bar bar-anim" style="--h:60%;height:60%;background:var(--g50);border-top-color:var(--g400);animation-delay:.07s"></div>
+            <div class="bar bar-anim" style="--h:52%;height:52%;background:var(--g50);border-top-color:var(--g400);animation-delay:.14s"></div>
+            <div class="bar bar-anim" style="--h:65%;height:65%;background:var(--g50);border-top-color:var(--g400);animation-delay:.21s"></div>
+            <div class="bar bar-anim" style="--h:70%;height:70%;background:var(--g50);border-top-color:var(--g400);animation-delay:.28s"></div>
+            <div class="bar bar-anim" style="--h:62%;height:62%;background:var(--g50);border-top-color:var(--g400);animation-delay:.35s"></div>
+            <div class="bar bar-anim" style="--h:76%;height:76%;background:var(--g100);border-top-color:var(--g600);animation-delay:.42s"></div>
+            <div class="bar bar-anim" style="--h:84%;height:84%;background:var(--g100);border-top-color:var(--g600);animation-delay:.49s"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--color-text-secondary)"><span>Apr 28</span><span style="color:var(--g600)">▲ Rising</span><span>May 27</span></div>
+        </div>
+        <div class="info-g">
+          <div style="font-size:12px;font-weight:500;color:var(--g800)"><i class="ti ti-bulb" aria-hidden="true"></i> AI sell advice</div>
+          <div style="font-size:12px;color:var(--g600);margin-top:2px">Price trending up 8%. Cotton peaks mid-June in Telangana. Sell 50% now, hold rest 3 weeks.</div>
+        </div>
+        <button class="btn-pri"><i class="ti ti-bell" aria-hidden="true"></i> Set price alert</button>
+        <button class="btn-sec"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Share to WhatsApp group</button>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- ════ STORE ════ -->
+    <div class="pg" id="pg-store">
+      <div class="pg-hdr">
+        <div class="pg-back"><button class="back-btn" onclick="nav('home')" aria-label="Back"><i class="ti ti-arrow-left" aria-hidden="true"></i> Home</button></div>
+        <div class="pg-title">Agri store</div>
+        <div class="pg-sub">Home delivery in 48 hours</div>
+      </div>
+      <div class="pad">
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <input class="inp" placeholder="Search seeds, sprays, tools..." style="flex:1">
+          <button class="btn-sm g" aria-label="Search"><i class="ti ti-search" aria-hidden="true"></i></button>
+        </div>
+        <div class="chip-row" style="margin-bottom:12px">
+          <div class="chip sel" onclick="selChip(this)">All</div>
+          <div class="chip" onclick="selChip(this)">Seeds</div>
+          <div class="chip" onclick="selChip(this)">Fertilisers</div>
+          <div class="chip" onclick="selChip(this)">Pesticides</div>
+          <div class="chip" onclick="selChip(this)">Tools</div>
+        </div>
+        <div class="info-g">
+          <div style="font-size:12px;font-weight:500;color:var(--g800)"><i class="ti ti-sparkles" aria-hidden="true"></i> AI-recommended for your cotton crop</div>
+          <div style="font-size:12px;color:var(--g600);margin-top:2px">Based on aphid diagnosis: Neem oil + Imidacloprid suggested</div>
+        </div>
+        <div class="card ani-fadeup">
+          <div class="store-item"><div class="s-img"><i class="ti ti-leaf" style="color:var(--g600)" aria-hidden="true"></i></div><div style="flex:1"><div class="s-name">Neem oil 5000 ppm</div><div class="s-sub">1 litre · Organic approved</div><div class="s-price">₹320 <span style="font-size:11px;color:var(--color-text-secondary);text-decoration:line-through">₹400</span></div></div><button class="btn-sm g">Add</button></div>
+          <div class="store-item"><div class="s-img"><i class="ti ti-droplet" style="color:var(--a600)" aria-hidden="true"></i></div><div style="flex:1"><div class="s-name">Imidacloprid 17.8 SL</div><div class="s-sub">250 ml · CIB registered</div><div class="s-price">₹185</div></div><button class="btn-sm g">Add</button></div>
+          <div class="store-item"><div class="s-img"><i class="ti ti-plant-2" style="color:var(--g600)" aria-hidden="true"></i></div><div style="flex:1"><div class="s-name">RCH-2 Bt Cotton seeds</div><div class="s-sub">450g · Govt certified</div><div class="s-price">₹830 <span class="badge green" style="font-size:10px">Cert.</span></div></div><button class="btn-sm g">Add</button></div>
+          <div class="store-item"><div class="s-img"><i class="ti ti-grain" style="color:var(--a600)" aria-hidden="true"></i></div><div style="flex:1"><div class="s-name">Urea (46-0-0) · 50 kg</div><div class="s-sub">IFFCO · Subsidised</div><div class="s-price">₹270 <span class="badge amber" style="font-size:10px">Subsidy</span></div></div><button class="btn-sm a">Add</button></div>
+          <div class="store-item"><div class="s-img"><i class="ti ti-tool" style="color:var(--b600)" aria-hidden="true"></i></div><div style="flex:1"><div class="s-name">Knapsack sprayer 16L</div><div class="s-sub">Manual · 2 yr warranty</div><div class="s-price">₹1,250</div></div><button class="btn-sm b">Add</button></div>
+        </div>
+        <div class="info-g" style="border-color:var(--brd2);background:var(--g50)">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:13px;font-weight:500">Cart · 2 items</div><div style="font-size:15px;font-weight:500;color:var(--g600)">₹505</div></div>
+          <div style="font-size:12px;color:var(--color-text-secondary);margin-top:4px"><i class="ti ti-truck" style="font-size:13px" aria-hidden="true"></i> Free delivery · Est. May 29 · COD available</div>
+          <button class="btn-pri" style="margin-top:10px"><i class="ti ti-shopping-bag" aria-hidden="true"></i> Checkout — ₹505</button>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- ════ MORE ════ -->
+    <div class="pg" id="pg-more">
+      <div class="pg-hdr">
+        <div class="pg-title">More</div>
+        <div class="pg-sub">Report · Language · Schemes · Mood</div>
+      </div>
+      <div class="tabbar">
+        <div class="tab act" onclick="stab(this,'mo-report')">Season report</div>
+        <div class="tab" onclick="stab(this,'mo-lang')">Language</div>
+        <div class="tab" onclick="stab(this,'mo-govt')">Schemes</div>
+        <div class="tab" onclick="stab(this,'mo-mood')">Mood</div>
+      </div>
+      <div class="pad">
+        <div id="mo-report" class="sp act">
+          <div class="stat2">
+            <div class="sbox"><div class="sbox-lbl">Total invested</div><div class="sbox-val">₹18,400</div></div>
+            <div class="sbox"><div class="sbox-lbl">Net profit est.</div><div class="sbox-val g">₹33,008</div></div>
+            <div class="sbox"><div class="sbox-lbl">Revenue est.</div><div class="sbox-val g">₹51,408</div></div>
+            <div class="sbox"><div class="sbox-lbl">ROI</div><div class="sbox-val g">79%</div></div>
+          </div>
+          <div class="sec-hd"><div class="sec-title">Cost breakdown</div></div>
+          <div class="card ani-fadeup">
+            <div class="rb-row"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>Labour</span><span style="font-weight:500">₹6,400 · 35%</span></div><div class="rb-track"><div class="rb-fill" style="--w:35%;background:var(--b400)"></div></div></div>
+            <div class="rb-row"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>Fertilisers</span><span style="font-weight:500">₹4,100 · 22%</span></div><div class="rb-track"><div class="rb-fill" style="--w:22%;background:var(--a400);animation-delay:.1s"></div></div></div>
+            <div class="rb-row"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>Seeds</span><span style="font-weight:500">₹3,200 · 17%</span></div><div class="rb-track"><div class="rb-fill" style="--w:17%;background:var(--g400);animation-delay:.2s"></div></div></div>
+            <div class="rb-row"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>Pesticides</span><span style="font-weight:500">₹2,800 · 15%</span></div><div class="rb-track"><div class="rb-fill" style="--w:15%;background:var(--r400);animation-delay:.3s"></div></div></div>
+            <div class="rb-row" style="margin:0"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>Irrigation</span><span style="font-weight:500">₹1,900 · 10%</span></div><div class="rb-track"><div class="rb-fill" style="--w:10%;background:var(--t400);animation-delay:.4s"></div></div></div>
+          </div>
+          <div class="info-g ani-fadeup d2">
+            <div style="font-size:12px;font-weight:500;color:var(--g800)">You spend ₹50/acre below state avg · Yield 11% above district</div>
+          </div>
+          <button class="btn-pri"><i class="ti ti-file-text" aria-hidden="true"></i> Download PDF report</button>
+          <button class="btn-sec"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Share to family / bank</button>
+        </div>
+
+        <div id="mo-lang" class="sp">
+          <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">Choose your language — app will fully switch</div>
+          <div class="lang-grid">
+            <div class="lang-btn sel ani-popIn d1" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Telugu</div><div style="font-size:12px;color:var(--color-text-secondary)">తెలుగు</div></div>
+            <div class="lang-btn ani-popIn d2" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Hindi</div><div style="font-size:12px;color:var(--color-text-secondary)">हिन्दी</div></div>
+            <div class="lang-btn ani-popIn d3" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Marathi</div><div style="font-size:12px;color:var(--color-text-secondary)">मराठी</div></div>
+            <div class="lang-btn ani-popIn d4" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Tamil</div><div style="font-size:12px;color:var(--color-text-secondary)">தமிழ்</div></div>
+            <div class="lang-btn ani-popIn d5" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Kannada</div><div style="font-size:12px;color:var(--color-text-secondary)">ಕನ್ನಡ</div></div>
+            <div class="lang-btn ani-popIn d6" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Gujarati</div><div style="font-size:12px;color:var(--color-text-secondary)">ગુજરાતી</div></div>
+            <div class="lang-btn" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Bengali</div><div style="font-size:12px;color:var(--color-text-secondary)">বাংলা</div></div>
+            <div class="lang-btn" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Punjabi</div><div style="font-size:12px;color:var(--color-text-secondary)">ਪੰਜਾਬੀ</div></div>
+            <div class="lang-btn" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Odia</div><div style="font-size:12px;color:var(--color-text-secondary)">ଓଡ଼ିଆ</div></div>
+            <div class="lang-btn" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Malayalam</div><div style="font-size:12px;color:var(--color-text-secondary)">മലയാളം</div></div>
+            <div class="lang-btn" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">Assamese</div><div style="font-size:12px;color:var(--color-text-secondary)">অসমীয়া</div></div>
+            <div class="lang-btn" onclick="selLang(this)"><div style="font-size:13px;font-weight:500">English</div><div style="font-size:12px;color:var(--color-text-secondary)">English</div></div>
+          </div>
+          <div class="div" style="margin:14px 0 12px"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--g50)"><div><div style="font-size:13px;font-weight:500">Voice input</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">Speak to fill any field</div></div><div class="toggle on" onclick="togToggle(this)"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--g50)"><div><div style="font-size:13px;font-weight:500">Read alerts aloud</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">Weather and prices in Telugu</div></div><div class="toggle on" onclick="togToggle(this)"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0"><div><div style="font-size:13px;font-weight:500">SMS fallback alerts</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">Reminders without internet</div></div><div class="toggle" onclick="togToggle(this)"></div></div>
+          <button class="btn-pri" style="margin-top:8px"><i class="ti ti-check" aria-hidden="true"></i> Save language</button>
+        </div>
+
+        <div id="mo-govt" class="sp">
+          <div class="scheme-card ani-fadeup d1">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div style="font-size:14px;font-weight:500">PM Kisan Samman Nidhi</div><span class="badge green">Eligible</span></div>
+            <div style="font-size:12px;color:var(--color-text-secondary)">₹6,000/year · 3 instalments · Next: Dec 2026</div>
+            <button class="btn-sm g" style="margin-top:10px">Check status</button>
+          </div>
+          <div class="scheme-card ani-fadeup d2">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div style="font-size:14px;font-weight:500">Rythu Bandhu · Telangana</div><span class="badge green">Eligible</span></div>
+            <div style="font-size:12px;color:var(--color-text-secondary)">₹10,000/acre/season · 3.2 acres = ₹32,000</div>
+            <button class="btn-sm g" style="margin-top:10px">Payment history</button>
+          </div>
+          <div class="scheme-card ani-fadeup d3">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div style="font-size:14px;font-weight:500">PMFBY Crop Insurance</div><span class="badge amber">Apply now</span></div>
+            <div style="font-size:12px;color:var(--color-text-secondary)">Cotton · Kharif 2026 · Deadline: 31 Jul · Premium ₹192</div>
+            <button class="btn-amber" style="margin-top:0"><i class="ti ti-shield" aria-hidden="true"></i> Apply from app</button>
+          </div>
+          <div class="scheme-card ani-fadeup d4">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div style="font-size:14px;font-weight:500">Kisan Credit Card</div><span class="badge blue">Check</span></div>
+            <div style="font-size:12px;color:var(--color-text-secondary)">Up to ₹3 lakh at 4% interest</div>
+            <button class="btn-sec" style="margin-top:4px"><i class="ti ti-credit-card" aria-hidden="true"></i> Check eligibility</button>
+          </div>
+        </div>
+
+        <div id="mo-mood" class="sp">
+          <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">Weekly mood check-ins — how is your crop feeling?</div>
+          <div class="card ani-fadeup">
+            <div class="sent-row"><i class="ti ti-mood-happy" style="font-size:20px;color:var(--g400);width:28px;flex-shrink:0" aria-hidden="true"></i><div style="flex:1"><div style="font-size:12px;color:var(--color-text-secondary)">Week 1–2 · Good germination · 96%</div><div class="sent-bar"><div class="sent-fill" style="--w:90%;width:90%;background:var(--g400)"></div></div></div><span class="badge green">90%</span></div>
+            <div class="sent-row"><i class="ti ti-mood-happy" style="font-size:20px;color:var(--g400);width:28px;flex-shrink:0" aria-hidden="true"></i><div style="flex:1"><div style="font-size:12px;color:var(--color-text-secondary)">Week 3–4 · Strong growth</div><div class="sent-bar"><div class="sent-fill" style="--w:82%;width:82%;background:var(--g400);animation-delay:.1s"></div></div></div><span class="badge green">82%</span></div>
+            <div class="sent-row"><i class="ti ti-mood-neutral" style="font-size:20px;color:var(--a400);width:28px;flex-shrink:0" aria-hidden="true"></i><div style="flex:1"><div style="font-size:12px;color:var(--color-text-secondary)">Week 5 · Aphid detected · Worried</div><div class="sent-bar"><div class="sent-fill" style="--w:45%;width:45%;background:var(--a400);animation-delay:.2s"></div></div></div><span class="badge amber">45%</span></div>
+            <div class="sent-row" style="border:none"><i class="ti ti-mood-happy" style="font-size:20px;color:var(--g400);width:28px;flex-shrink:0" aria-hidden="true"></i><div style="flex:1"><div style="font-size:12px;color:var(--color-text-secondary)">Week 6 · Treated · Recovering</div><div class="sent-bar"><div class="sent-fill" style="--w:75%;width:75%;background:var(--g400);animation-delay:.3s"></div></div></div><span class="badge green">75%</span></div>
+          </div>
+          <div class="info-a ani-fadeup d2">
+            <div style="font-size:12px;font-weight:500;color:var(--a600)"><i class="ti ti-info-circle" aria-hidden="true"></i> Kisan helpline (free)</div>
+            <div style="font-size:12px;color:var(--a600);margin-top:2px">Dial 1800-180-1551 if you feel financially stressed or need any farming help.</div>
+          </div>
+          <div class="info-r ani-fadeup d3">
+            <div style="font-size:12px;font-weight:500;color:var(--r600)"><i class="ti ti-alert-triangle" aria-hidden="true"></i> District alert</div>
+            <div style="font-size:12px;color:var(--r600);margin-top:2px">22 Warangal farmers reported aphid symptoms in 48 hrs. Agri dept alerted.</div>
+          </div>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav" role="navigation" aria-label="Main navigation">
+    <button class="ni act" id="ni-home" onclick="nav('home')"><div class="ni-bar"></div><i class="ti ti-home" aria-hidden="true"></i><span>Home</span></button>
+    <button class="ni" id="ni-tracker" onclick="nav('tracker')"><div class="ni-bar"></div><i class="ti ti-clipboard-list" aria-hidden="true"></i><span>Tracker</span></button>
+    <button class="ni" id="ni-diagnosis" onclick="nav('diagnosis')"><div class="ni-bar"></div><i class="ti ti-camera" aria-hidden="true"></i><span>AI Scan</span></button>
+    <button class="ni" id="ni-calendar" onclick="nav('calendar')"><div class="ni-bar"></div><i class="ti ti-calendar" aria-hidden="true"></i><span>Calendar</span></button>
+    <button class="ni" id="ni-market" onclick="nav('market')"><div class="ni-bar"></div><i class="ti ti-currency-rupee" aria-hidden="true"></i><span>Market</span></button>
+    <button class="ni" id="ni-store" onclick="nav('store')"><div class="ni-bar"></div><i class="ti ti-shopping-cart" aria-hidden="true"></i><span>Store</span></button>
+    <button class="ni" id="ni-more" onclick="nav('more')"><div class="ni-bar"></div><i class="ti ti-dots" aria-hidden="true"></i><span>More</span></button>
+  </div>
+</div>
+
+<script>
+function nav(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('act'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));
+  const pg=document.getElementById('pg-'+id);
+  if(pg)pg.classList.add('act');
+  const ni=document.getElementById('ni-'+id);
+  if(ni)ni.classList.add('act');
+  const scr=document.getElementById('SCR');
+  if(scr)scr.scrollTop=0;
+}
+function stab(el,tid){
+  const bar=el.closest('.tabbar');
+  if(bar)bar.querySelectorAll('.tab').forEach(t=>t.classList.remove('act'));
+  el.classList.add('act');
+  const pg=el.closest('.pg');
+  if(pg)pg.querySelectorAll('.sp').forEach(s=>s.classList.remove('act'));
+  const t=document.getElementById(tid);
+  if(t)t.classList.add('act');
+}
+function adj(id,d){
+  const el=document.getElementById(id);
+  let v=parseInt(el.textContent)||0;
+  v=Math.max(0,v+d);
+  el.textContent=v;
+}
+function selChip(el){
+  const row=el.closest('.chip-row');
+  if(row)row.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function selLang(el){
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function togToggle(el){el.classList.toggle('on')}
+</script>
